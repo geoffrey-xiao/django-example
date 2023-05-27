@@ -4,7 +4,11 @@ from rest_framework.response import Response
 from .serializers import ProjectSerializer,TagSerializer
 from projects.models import Project, Review, Tag
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 
+from rest_framework import filters
+
+from .filters import TagFilters
 @api_view(['GET'])
 def getRoutes(request):
 
@@ -70,3 +74,31 @@ class TagsViewSet(ModelViewSet):
     queryset = Tag.objects.order_by('id')
 
     serializer_class = TagSerializer
+
+    filter_backends=[DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
+
+    # filterset_fields = ['id', 'name']
+    filterset_class = TagFilters
+
+    search_fields=['name']
+
+    ordering_fields = ['id','name']
+
+    def list(self,request,*args,**kwargs):
+        return super().list(request,*args,**kwargs)
+
+    def create(self,request,*args,**kwargs):
+        return super().create(request,*args,**kwargs)
+
+    def update(self,request,*args,**kwargs):
+        return super().update(request,*args,**kwargs)
+
+    def partial_update(self,request,*args,**kwargs):
+        return super().partial_update(request,*args,**kwargs)
+
+    def destroy(self,request,*args,**kwargs):
+        return super().destroy(request,*args,**kwargs)
+
+        
+
+
