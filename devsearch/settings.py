@@ -62,6 +62,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Your project description',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    "PREPROCESSING_HOOKS": ["api.utils.preprocessing_filter_spec"],
     # OTHER SETTINGS
 }
 
