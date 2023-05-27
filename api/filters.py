@@ -9,5 +9,9 @@ class TagFilters(filters.FilterSet):
     class Meta:
         model = models.Tag
         # 对于`model`中存在的字段，可以直接指定字段名
-        fields = ['id', 'name'] 
+        fields = ['id', 'name']
+        # field = {
+        #     'id':['contains','istarts'],
+        #     'name':['contains','icontains','istarts']
+        # }
         # 最终支持查询的字段包含自定义的`p_name`与  `fields`中指定的字段

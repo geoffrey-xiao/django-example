@@ -22,4 +22,5 @@ urlpatterns = [
     path('remove-tag/', views.removeTag),
 
     path('',include(router.urls))
+
 ]

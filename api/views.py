@@ -1,12 +1,12 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes,action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from .serializers import ProjectSerializer,TagSerializer
+from .serializers import ProjectSerializer,TagSerializer,MessageSerializer
 from projects.models import Project, Review, Tag
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import filters
+from rest_framework import filters,pagination
 
 from .filters import TagFilters
 @api_view(['GET'])
@@ -84,6 +84,8 @@ class TagsViewSet(ModelViewSet):
 
     ordering_fields = ['id','name']
 
+    pagination_class = pagination.LimitOffsetPagination
+
     def list(self,request,*args,**kwargs):
         return super().list(request,*args,**kwargs)
 
@@ -99,6 +101,12 @@ class TagsViewSet(ModelViewSet):
     def destroy(self,request,*args,**kwargs):
         return super().destroy(request,*args,**kwargs)
 
-        
+    @action(detail=False,methods=['post'],url_path='test',serializer_class=MessageSerializer)
+    def test(self,request,*args,**kwargs):
+        return Response({
+            'code':0,
+            'message':'success'
+        })
+
 
 

@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 from django.contrib.auth import views as auth_views
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +24,13 @@ urlpatterns = [
 
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="reset_password_complete.html"),
          name="password_reset_complete"),
+
+
+     # YOUR PATTERNS
+    path('apis/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('apis/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('apis/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
 
