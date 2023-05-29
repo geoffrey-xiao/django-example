@@ -1,14 +1,24 @@
-from rest_framework.decorators import api_view, permission_classes,action
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from .serializers import ProjectSerializer,TagSerializer,MessageSerializer
+from .serializers import ProjectSerializer, TagSerializer, MessageSerializer
 from projects.models import Project, Review, Tag
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import filters,pagination
+from rest_framework import filters, pagination
+
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
+from rest_framework.settings import api_settings
+
+from .mixin import TagCsvMixin
+
+from .renderer import TagRenderer
 
 from .filters import TagFilters
+
+
 @api_view(['GET'])
 def getRoutes(request):
 
@@ -70,43 +80,54 @@ def removeTag(request):
     return Response('Tag was deleted!')
 
 
-class TagsViewSet(ModelViewSet):
+class TagsViewSet(ModelViewSet, TagCsvMixin):
     queryset = Tag.objects.order_by('id')
 
     serializer_class = TagSerializer
 
-    filter_backends=[DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
 
     # filterset_fields = ['id', 'name']
     filterset_class = TagFilters
 
-    search_fields=['name']
+    search_fields = ['name']
 
-    ordering_fields = ['id','name']
+    ordering_fields = ['id', 'name']
 
     pagination_class = pagination.LimitOffsetPagination
 
-    def list(self,request,*args,**kwargs):
-        return super().list(request,*args,**kwargs)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
-    def create(self,request,*args,**kwargs):
-        return super().create(request,*args,**kwargs)
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
 
-    def update(self,request,*args,**kwargs):
-        return super().update(request,*args,**kwargs)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
-    def partial_update(self,request,*args,**kwargs):
-        return super().partial_update(request,*args,**kwargs)
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
 
-    def destroy(self,request,*args,**kwargs):
-        return super().destroy(request,*args,**kwargs)
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
-    @action(detail=False,methods=['post'],url_path='test',serializer_class=MessageSerializer)
-    def test(self,request,*args,**kwargs):
+    @action(detail=False, methods=['post'], url_path='test', serializer_class=MessageSerializer)
+    def test(self, request, *args, **kwargs):
         return Response({
-            'code':0,
-            'message':'success'
+            'code': 0,
+            'message': 'success'
         })
 
-
-
+    @extend_schema(
+        parameters=[OpenApiParameter(name='id', description='id', type=int),
+                    OpenApiParameter(name='format', exclude=True)],
+        responses={
+            (200, 'application/json'): OpenApiResponse(TagSerializer(many=True)),
+            (200, 'text/csv'): OpenApiTypes.BINARY
+        })
+    @action(detail=False, methods=['get'], url_path='test-csv',
+            renderer_classes=(tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (TagRenderer,)))
+    def test_csv(self, request):
+        # return Response({'code':0})
+        return super().compare(request)

@@ -35,6 +35,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         serializer = ReviewSerializer(reviews, many=True)
         return serializer.data
 
+
 class MessageSerializer(serializers.Serializer):
-    code=serializers.IntegerField()
+    code = serializers.IntegerField()
     message = serializers.CharField()

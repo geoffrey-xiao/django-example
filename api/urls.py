@@ -1,14 +1,14 @@
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 from django.urls import path, include
 from . import views
 from rest_framework.routers import SimpleRouter
 from .views import TagsViewSet
 router = SimpleRouter()
 
-router.register(r'tags',TagsViewSet,basename='tags')
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+router.register(r'tags', TagsViewSet, basename='tags')
 
 urlpatterns = [
     path('users/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -21,6 +21,6 @@ urlpatterns = [
 
     path('remove-tag/', views.removeTag),
 
-    path('',include(router.urls))
+    path('', include(router.urls))
 
 ]

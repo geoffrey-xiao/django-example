@@ -2,9 +2,10 @@
 import django_filters.rest_framework as filters
 from projects import models
 
+
 class TagFilters(filters.FilterSet):
     # p_name 实际是查询`name`字段
-    tag_name = filters.CharFilter(field_name='name',lookup_expr='icontains')
+    tag_name = filters.CharFilter(field_name='name', lookup_expr='icontains')
 
     class Meta:
         model = models.Tag
