@@ -26,11 +26,13 @@ urlpatterns = [
          name="password_reset_complete"),
 
 
-     # YOUR PATTERNS
+    # YOUR PATTERNS
     path('apis/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:
-    path('apis/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('apis/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('apis/docs/', SpectacularSwaggerView.as_view(url_name='schema'),
+         name='swagger-ui'),
+    path('apis/schema/redoc/',
+         SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
 

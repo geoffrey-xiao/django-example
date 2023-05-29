@@ -131,3 +131,13 @@ class TagsViewSet(ModelViewSet, TagCsvMixin):
     def test_csv(self, request):
         # return Response({'code':0})
         return super().compare(request)
+
+    @action(detail=True, methods=['get'], url_path='test-tag')
+    def test_tag(self, request, pk=None):
+        tag = Tag.objects.get(id=pk)
+
+        other_searilizer = TagSerializer(tag, many=False, context={
+            'request': request, 'description': 'aaa'
+        })
+
+        return Response(other_searilizer.data)

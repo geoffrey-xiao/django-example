@@ -1,6 +1,7 @@
+from .serializers import TagSerializer
 from rest_framework import viewsets
 from projects import models
-from .serializers import TagSerializer
+# from .serializers import TagSerializer
 from io import StringIO
 from rest_framework import response
 import csv
