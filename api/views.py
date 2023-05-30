@@ -1,3 +1,6 @@
+from urllib.parse import urlencode
+from django.urls import reverse
+from django.shortcuts import redirect
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -141,3 +144,29 @@ class TagsViewSet(ModelViewSet, TagCsvMixin):
         })
 
         return Response(other_searilizer.data)
+
+    @extend_schema(responses=MessageSerializer,
+                   parameters=[
+                       OpenApiParameter(name='code', type=int,
+                                        description='input code', required=True),
+                       OpenApiParameter(name='message', type=str,
+                                        description='input message', required=True)
+                   ])
+    @action(detail=True, methods=['get'], url_path='test-serializer', serializer_class=MessageSerializer)
+    def test_serializer(self, request, **kwargs):
+        tag = self.get_object()
+        serializer = MessageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        print('tag', tag)
+        return Response(
+            serializer.data,
+            status=200
+        )
+
+    @extend_schema(exclude=True)
+    @action(detail=True, methods=['get'], url_path='test-redirect')
+    def test_redirect(self, request, **kwargs):
+        params = request.query_params.dict()
+        params.update(kwargs)
+
+        return redirect(reverse('project-list') + '?' + urlencode(params))

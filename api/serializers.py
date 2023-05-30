@@ -39,3 +39,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.Serializer):
     code = serializers.IntegerField()
     message = serializers.CharField()
+
+    def validate(self, attrs):
+        if attrs['code'] != 0:
+            raise serializers.ValidationError('A non field error')
+
+        return attrs

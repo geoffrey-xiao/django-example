@@ -14,7 +14,7 @@ class TagCsvMixin(viewsets.GenericViewSet):
 
         serializer = TagSerializer(queryset, many=True)
 
-        if request.META.get('MEDIA_TYPE') == 'text/csv':
+        if request.META.get('HTTP_ACCEPT') == 'text/csv':
             data = StringIO()
 
             fieldnames = ['id', 'name', 'created']
