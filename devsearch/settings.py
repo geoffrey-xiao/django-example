@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'storages',
 
     'django_filters',
-    'drf_spectacular'
+    'drf_spectacular',
+    'coverage'
 
 ]
 
