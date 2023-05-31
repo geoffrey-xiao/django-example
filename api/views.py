@@ -84,7 +84,7 @@ def removeTag(request):
 
 
 class TagsViewSet(ModelViewSet, TagCsvMixin):
-    queryset = Tag.objects.order_by('id')
+    queryset = Tag.objects.all().order_by('id')
 
     serializer_class = TagSerializer
 
