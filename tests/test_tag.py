@@ -2,6 +2,7 @@ from pstats import Stats
 from rest_framework import status
 from rest_framework.test import APITestCase
 from projects import models
+from tests.factories import TagFactory
 
 
 class TestTagAPI(APITestCase):
@@ -85,3 +86,10 @@ class TestTagAPI(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'tag6')
+
+    def test_tag_factory(self):
+        tag = TagFactory.create(name='test_factory')
+        response = self.client.get('/api/tags/?tag_name=test_factory')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)

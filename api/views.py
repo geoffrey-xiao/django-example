@@ -2,7 +2,7 @@ from urllib.parse import urlencode
 from django.urls import reverse
 from django.shortcuts import redirect
 from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from .serializers import ProjectSerializer, TagSerializer, MessageSerializer
 from projects.models import Project, Review, Tag
@@ -166,6 +166,56 @@ class TagsViewSet(ModelViewSet, TagCsvMixin):
     @extend_schema(exclude=True)
     @action(detail=True, methods=['get'], url_path='test-redirect')
     def test_redirect(self, request, **kwargs):
+        params = request.query_params.dict()
+        params.update(kwargs)
+
+        return redirect(reverse('project-list') + '?' + urlencode(params))
+
+
+class ProjectsViewSet(ModelViewSet, TagCsvMixin):
+    queryset = Project.objects.all().order_by('id')
+
+    serializer_class = ProjectSerializer
+
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+
+    filterset_fields = ['id', 'title']
+    # filterset_class = TagFilters
+#
+    search_fields = ['title']
+
+    ordering_fields = ['id', 'title']
+
+    pagination_class = pagination.LimitOffsetPagination
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_permission(self):
+        if (self.action in ['create']):
+            permissions = [IsAuthenticated]
+        elif (self.action in ['update']):
+            permissions = [IsAuthenticated]
+        else:
+            permissions = [IsAuthenticatedOrReadOnly]
+
+        return [permission() for permission in permissions]
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
         params = request.query_params.dict()
         params.update(kwargs)
 
